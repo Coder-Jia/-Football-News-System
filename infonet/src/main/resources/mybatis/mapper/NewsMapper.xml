@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jy.infonet.dao.NewsMapper">
+  <resultMap id="BaseResultMap" type="com.jy.infonet.entity.News">
+    <id column="news_id" jdbcType="INTEGER" property="newsId" />
+    <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
+    <result column="news_intro" jdbcType="VARCHAR" property="newsIntro" />
+    <result column="news_date" jdbcType="TIMESTAMP" property="newsDate" />
+    <result column="news_browse" jdbcType="INTEGER" property="newsBrowse" />
+    <result column="news_cover" jdbcType="VARCHAR" property="newsCover" />
+    <result column="news_like" jdbcType="INTEGER" property="newsLike" />
+    <result column="news_content" jdbcType="VARCHAR" property="newsContent" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="news_comment" jdbcType="INTEGER" property="newsComment" />
+  </resultMap>
+  <!-- 联合查询 -->
+  <resultMap id="WithTypeResultMap" type="com.jy.infonet.entity.News">
+    <id column="news_id" jdbcType="INTEGER" property="newsId" />
+    <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
+    <result column="news_intro" jdbcType="VARCHAR" property="newsIntro" />
+    <result column="news_date" jdbcType="TIMESTAMP" property="newsDate" />
+    <result column="news_browse" jdbcType="INTEGER" property="newsBrowse" />
+    <result column="news_cover" jdbcType="VARCHAR" property="newsCover" />
+    <result column="news_like" jdbcType="INTEGER" property="newsLike" />
+    <result column="news_content" jdbcType="VARCHAR" property="newsContent" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="news_comment" jdbcType="INTEGER" property="newsComment" />
+    <association property="types" javaType="types">
+      <id column="type_id" property="typeId"/>
+      <result column="type_name" property="typeName"/>
+      <result column="type_cover" property="typeCover"/>
+    </association>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and n.${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    news_id, news_title, news_intro, news_date, news_browse, news_cover, news_like, news_content, 
+    type_id, news_comment
+  </sql>
+  <sql id="WithType_Column_List">   <!-- 联合查询使用 -->
+    n.news_id, n.news_title, n.news_intro, n.news_date, n.news_browse, n.news_cover, n.news_like, n.news_content,
+    n.type_id, n.news_comment, t.type_name, t.type_cover
+  </sql>
+  <!--  联合查询类别信息 -->
+  <select id="selectByExampleWithType" parameterType="com.jy.infonet.entity.NewsExample" resultMap="WithTypeResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="WithType_Column_List" />
+    from news n
+    left join types t on n.type_id = t.type_id
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.jy.infonet.entity.NewsExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from news
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <!-- 联合查询主键 -->
+  <select id="selectByPrimaryKeyWithType" parameterType="java.lang.Integer" resultMap="WithTypeResultMap">
+    select
+    <include refid="WithType_Column_List" />
+    from news n
+    left join types t on n.type_id = t.type_id
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from news
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from news
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.infonet.entity.NewsExample">
+    delete from news
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.infonet.entity.News">
+    insert into news (news_id, news_title, news_intro, 
+      news_date, news_browse, news_cover, 
+      news_like, news_content, type_id, 
+      news_comment)
+    values (#{newsId,jdbcType=INTEGER}, #{newsTitle,jdbcType=VARCHAR}, #{newsIntro,jdbcType=VARCHAR}, 
+      #{newsDate,jdbcType=TIMESTAMP}, #{newsBrowse,jdbcType=INTEGER}, #{newsCover,jdbcType=VARCHAR}, 
+      #{newsLike,jdbcType=INTEGER}, #{newsContent,jdbcType=VARCHAR}, #{typeId,jdbcType=INTEGER}, 
+      #{newsComment,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.infonet.entity.News" useGeneratedKeys="true" keyProperty="newsId">
+    insert into news
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="newsId != null">
+        news_id,
+      </if>
+      <if test="newsTitle != null">
+        news_title,
+      </if>
+      <if test="newsIntro != null">
+        news_intro,
+      </if>
+      <if test="newsDate != null">
+        news_date,
+      </if>
+      <if test="newsBrowse != null">
+        news_browse,
+      </if>
+      <if test="newsCover != null">
+        news_cover,
+      </if>
+      <if test="newsLike != null">
+        news_like,
+      </if>
+      <if test="newsContent != null">
+        news_content,
+      </if>
+      <if test="typeId != null">
+        type_id,
+      </if>
+      <if test="newsComment != null">
+        news_comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="newsId != null">
+        #{newsId,jdbcType=INTEGER},
+      </if>
+      <if test="newsTitle != null">
+        #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="newsIntro != null">
+        #{newsIntro,jdbcType=VARCHAR},
+      </if>
+      <if test="newsDate != null">
+        #{newsDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="newsBrowse != null">
+        #{newsBrowse,jdbcType=INTEGER},
+      </if>
+      <if test="newsCover != null">
+        #{newsCover,jdbcType=VARCHAR},
+      </if>
+      <if test="newsLike != null">
+        #{newsLike,jdbcType=INTEGER},
+      </if>
+      <if test="newsContent != null">
+        #{newsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null">
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="newsComment != null">
+        #{newsComment,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.infonet.entity.NewsExample" resultType="java.lang.Long">
+    select count(*) from news AS n
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update news
+    <set>
+      <if test="record.newsId != null">
+        news_id = #{record.newsId,jdbcType=INTEGER},
+      </if>
+      <if test="record.newsTitle != null">
+        news_title = #{record.newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsIntro != null">
+        news_intro = #{record.newsIntro,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsDate != null">
+        news_date = #{record.newsDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.newsBrowse != null">
+        news_browse = #{record.newsBrowse,jdbcType=INTEGER},
+      </if>
+      <if test="record.newsCover != null">
+        news_cover = #{record.newsCover,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newsLike != null">
+        news_like = #{record.newsLike,jdbcType=INTEGER},
+      </if>
+      <if test="record.newsContent != null">
+        news_content = #{record.newsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.typeId != null">
+        type_id = #{record.typeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.newsComment != null">
+        news_comment = #{record.newsComment,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update news
+    set news_id = #{record.newsId,jdbcType=INTEGER},
+      news_title = #{record.newsTitle,jdbcType=VARCHAR},
+      news_intro = #{record.newsIntro,jdbcType=VARCHAR},
+      news_date = #{record.newsDate,jdbcType=TIMESTAMP},
+      news_browse = #{record.newsBrowse,jdbcType=INTEGER},
+      news_cover = #{record.newsCover,jdbcType=VARCHAR},
+      news_like = #{record.newsLike,jdbcType=INTEGER},
+      news_content = #{record.newsContent,jdbcType=VARCHAR},
+      type_id = #{record.typeId,jdbcType=INTEGER},
+      news_comment = #{record.newsComment,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.infonet.entity.News">
+    update news
+    <set>
+      <if test="newsTitle != null">
+        news_title = #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="newsIntro != null">
+        news_intro = #{newsIntro,jdbcType=VARCHAR},
+      </if>
+      <if test="newsDate != null">
+        news_date = #{newsDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="newsBrowse != null">
+        news_browse = #{newsBrowse,jdbcType=INTEGER},
+      </if>
+      <if test="newsCover != null">
+        news_cover = #{newsCover,jdbcType=VARCHAR},
+      </if>
+      <if test="newsLike != null">
+        news_like = #{newsLike,jdbcType=INTEGER},
+      </if>
+      <if test="newsContent != null">
+        news_content = #{newsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null">
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="newsComment != null">
+        news_comment = #{newsComment,jdbcType=INTEGER},
+      </if>
+    </set>
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.infonet.entity.News">
+    update news
+    set news_title = #{newsTitle,jdbcType=VARCHAR},
+      news_intro = #{newsIntro,jdbcType=VARCHAR},
+      news_date = #{newsDate,jdbcType=TIMESTAMP},
+      news_browse = #{newsBrowse,jdbcType=INTEGER},
+      news_cover = #{newsCover,jdbcType=VARCHAR},
+      news_like = #{newsLike,jdbcType=INTEGER},
+      news_content = #{newsContent,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      news_comment = #{newsComment,jdbcType=INTEGER}
+    where news_id = #{newsId,jdbcType=INTEGER}
+  </update>
+</mapper>

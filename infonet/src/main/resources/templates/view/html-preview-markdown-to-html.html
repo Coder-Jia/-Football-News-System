@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8" />
+        <title>显示资讯</title>
+        <link rel="stylesheet" th:href="@{/plugins/css/editormd.preview.css}" />
+        <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+        <style>            
+            .editormd-html-preview {
+                width: 90%;
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+    <div th:fragment="showcontent">
+        <div id="content">
+            <textarea id="append-test" style="display:none;">
+                [[${news.newsContent}]]
+            </textarea>
+        </div>
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <script th:src="@{/plugins/lib/marked.min.js}"></script>
+        <script th:src="@{/plugins/lib/prettify.min.js}"></script>
+        <script th:src="@{/plugins/lib/raphael.min.js}"></script>
+        <script th:src="@{/plugins/lib/underscore.min.js}"></script>
+        <script th:src="@{/plugins/lib/sequence-diagram.min.js}"></script>
+        <script th:src="@{/plugins/lib/flowchart.min.js}"></script>
+        <script th:src="@{/plugins/lib/jquery.flowchart.min.js}"></script>
+        <script th:src="@{/plugins/editormd.js}"></script>
+        <script type="text/javascript">
+            $(function() {
+                var View;
+                View = editormd.markdownToHTML("content", {
+                    markdown        : $("#append-test").text() ,
+                    htmlDecode      : "style,script,iframe",
+                    tocm            : true,
+                    emoji           : true,
+                    taskList        : true,
+                    tex             : true,  // 默认不解析
+                    flowChart       : true,  // 默认不解析
+                    sequenceDiagram : true,  // 默认不解析
+                });
+            });
+        </script>
+    </div>
+
+    </body>
+</html>

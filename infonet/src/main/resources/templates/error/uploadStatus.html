@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>status</title>
+</head>
+<body>
+    <div th:if="${message}">
+        <h2 th:text="${message}">上传格式有误！确保资讯内容的完整，包含完整标题、封面、简介等！</h2>
+    </div>
+
+    <div th:text="${page}">
+
+    </div>
+</body>
+</html>

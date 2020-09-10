@@ -1,0 +1,49 @@
+@charset "UTF-8";
+
+h3,p{
+	color:#c0c0c0;
+}
+
+.new-group{
+	margin-top:15px;
+}
+
+.new-group a{
+	background-color:#2c2c34;
+	border:0px;
+	border-left:1px solid white;
+	color:white;
+	
+}
+.new-group span{
+	background-color:#2c2c34;
+	border:0px;
+	border-left:1px solid white;
+	color:white;
+}
+
+.hot-group{
+	margin-top:15px;
+}
+
+.hot-group div{
+	background-color:#2c2c34;
+	border:0px;
+	border-right:1px solid white;
+}
+
+.hot-group a{
+	background-color:#2c2c34;
+	border:0px;
+	border-right:1px solid white;
+	color:white;
+	text-align:left;
+	
+}
+.hot-group span{
+	background-color:#2c2c34;
+	border:0px;
+	border-right:1px solid white;
+	color:white;
+	text-align:left;
+}

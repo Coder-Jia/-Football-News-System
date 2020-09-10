@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+	<title>资讯类别管理</title>
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" th:href="@{/css/tables.css}"/>
+	<script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<!--导航栏-->
+<div th:replace="~{mana/Nav_mana::nav_mana}"></div>
+<!--侧边栏-->
+<div th:replace="~{mana/besider::desiderbar}"></div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="messageModal" th:if="${message!=null && not #strings.isEmpty(message)}">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<!-- 头部 -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">看看这里！<span class="result_span"></span><br/></h4>
+			</div>
+			<!-- 身体 -->
+			<div class="modal-body">
+				<p><span class="result_span">[[${message}]]</span>&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(function(){
+	    $("#messageModal").modal("show");
+	});
+</script>
+
+<div class="row" style="margin-left:20%;position:absolute;top:50px;">
+	<table id="hor-minimalist-a" summary="Employee Pay Sheet" style="table-layout: fixed;width:1000px;">
+		<thead>
+		<tr>
+			<th scope="col" style="width:100px;">类别编号</th>
+			<th scope="col" style="width:200px;">类别名称</th>
+			<th scope="col" style="width:280px;">类别资讯总数</th>
+			<th scope="col" style="width:220px;">类别操作[option]</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="type:${allTypes}">
+			<td>[[${type.typeId}]]</td>
+			<td>[[${type.typeName}]]</td>
+			<td th:id="${type.typeId}+'total'"></td>
+			<script>
+                $.get(
+                    "/infonet/typesOfnews",
+                    {"tid":[[${type.typeId}]]+""},
+                    function(total){
+						$("#"+[[${type.typeId}]]+"total").text(total);
+                    }
+                );
+			</script>
+			<td>
+				<a class="btn btn-danger putBtn" th:if="${type.deleted==0}" th:attr="tid=${type.typeId},tName=${type.typeName}">修改</a>
+				<button th:if="${type.deleted==0}" class="btn btn-danger deleteBtn" th:attr="deluri=@{/types}+'?typeID='+${type.typeId}+'&&op=1'">删除</button>
+				<button th:if="${type.deleted==1}" style="width:110px;" class="btn btn-warning deleteBtn" th:attr="deluri=@{/types}+'?typeID='+${type.typeId}+'&&op=0'">撤销删除</button>
+			</td>
+		</tr>
+		<tr><td colspan="4"></td></tr>
+
+		<form th:action="@{/types}" method="post" enctype="multipart/form-data"><tr>
+			<td><h5 style="color: orangered;font-weight: bolder">添加类别</h5></td>
+			<td><input style="width:100%;" type="text" th:name="typeName" class="form-control" placeholder="新增类别名称"></td>
+			<td>
+				<div class="form-group">
+					<label for="exampleInputFile">添加类别封面(1366*300分辨率较佳)</label>
+					<input type="file" id="exampleInputFile" th:name="cover"/>
+				</div>
+			</td>
+			<td>
+				<button class="btn btn-success" th:type="submit">确认添加</button>
+			</td>
+		</tr></form>
+
+		<form th:action="@{/types}" method="post" enctype="multipart/form-data" ><tr id="putTr" class="hidden">
+			<input type="hidden" id="putId" th:name="typeId" />
+			<td><h5 style="color: orangered;font-weight: bolder">修改类别</h5></td>
+			<td><input style="width:100%;" type="text" th:name="typeName" id="tname" class="form-control" placeholder="新增类别名称"></td>
+			<td>
+				<div class="form-group">
+					<label for="exampleInputFile2">修改类别封面(1366*300分辨率较佳)</label>
+					<input type="file" id="exampleInputFile2" th:name="cover"/>
+				</div>
+			</td>
+			<td>
+				<button class="btn btn-success" th:type="submit">确认修改</button>
+			</td>
+		</tr></form>
+		</tbody>
+	</table>
+</div>
+
+
+<script>
+    $(function(){
+        $(".deleteBtn").click(function(){
+			$.ajax({
+				url: $(this).attr("deluri"),
+				type: "delete",
+				contentType: "application/json",//设置请求参数类型为json字符串,
+				success: function (result) {
+					console.log(result);
+					$(".result_span").text(result);
+					$("#mymodal").modal("show");
+					window.setTimeout(function(){
+						window.location.href = "/infonet/types?totype=true";
+					},1000);
+				}
+			});
+        });
+
+        $(".putBtn").click(function(){
+			$("#tname").val($(this).attr("tName"));
+			$("#putId").val($(this).attr("tid"));
+            $("#putTr").removeClass("hidden");
+        });
+    });
+</script>
+<!-- 接受删除操作结果 -->
+<div class="modal fade" tabindex="-1" role="dialog" id="mymodal" >
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<!-- 头部 -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">看看这里！<span class="result_span"></span><br/></h4>
+			</div>
+			<!-- 身体 -->
+			<div class="modal-body">
+				<p><span class="result_span"></span>&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+</script>
+</body>
+</html>

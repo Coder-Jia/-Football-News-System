@@ -1,0 +1,80 @@
+@charset "UTF-8";
+
+/*背景*/
+.Page-bg{
+	padding:2px 0 0 2px;
+	height:auto;
+	background-color:#2c2c34;
+	position:relative;	
+}
+
+body{
+	overflow:-Scroll;
+	overflow-x:hidden;
+}  
+
+/*五大联赛分栏*/
+.Game{
+	margin-left:10px;
+	float:left;
+	background-color:white;
+	position:relative;
+	overflow:hidden;
+}
+
+.Game >a{
+	width:100%;
+	height:100%;
+	float:left;
+	text-align:center;
+	position:relative;
+}
+
+/* 点击覆盖效果 */
+.icon >h1{
+	margin-top:20%;
+	color:gray;
+	opacity:0.5;
+}
+
+.icon{
+	width:100%;
+	height:100%;
+	position:absolute;
+	left:0;
+	top:0px;
+	opacity:0;
+}
+
+.icon:hover{
+ 	background:#373335;
+	opacity:0.9;
+	transition:opacity 0.5s;
+	-webkit-transition:opacity 0.5s;
+}
+
+/*导航栏下拉菜单*/
+
+.dropdown-menu{
+	background-color:#242424;
+}
+
+.navbar-default .navbar-nav .open .dropdown-menu>li>a,.navbar-default .navbar-nav .open .dropdown-menu {
+    color:lightgray;
+}
+
+.ICON{
+	width:20px;
+	heigth:20px;
+}
+
+.ICON_Content{
+	width:30px;
+	heigth:30px;
+}
+
+/*导航栏*/
+.navbar {
+	box-shadow: 10px 10px 20px 10px gray;
+	border: 0px;
+}

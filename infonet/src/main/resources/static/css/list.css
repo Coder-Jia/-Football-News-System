@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+
+h4,p{
+	color:white;
+}
+
+p{
+	padding-top:5px;
+	color:gray
+}

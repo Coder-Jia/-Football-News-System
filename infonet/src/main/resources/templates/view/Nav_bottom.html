@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<!-- 五大联赛分栏 -->
+	<div class="row" th:fragment="nav_bottom">
+		<div class="container" style="background-color:white;width:100%;">
+			<div class="col-md-1"></div>
+			<div class="col-md-2 Game">
+				<a th:href="@{/NewsListWithType}+'?TypeID=1'">
+					<img th:src="@{/images/British.jpg}" style="width:100%;"/>
+					<div class="icon">
+						<h1><strong>英超</strong></h1>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-2 Game">
+				<a th:href="@{/NewsListWithType}+'?TypeID=2'">
+					<img th:src="@{/images/Spanish.jpg}" style="width:100%;"/>
+					<div class="icon">
+						<h1><strong>西甲</strong></h1>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-2 Game">
+				<a th:href="@{/NewsListWithType}+'?TypeID=3'">
+					<img th:src="@{/images/France.jpeg}" style="width:100%;"/>
+					<div class="icon">
+						<h1><strong>法甲</strong></h1>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-2 Game">
+				<a th:href="@{/NewsListWithType}+'?TypeID=5'">
+					<img th:src="@{/images/Italy.jpg}" style="width:100%;"/>
+					<div class="icon">
+						<h1><strong>意甲</strong></h1>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-2 Game">
+				<a th:href="@{/NewsListWithType}+'?TypeID=4'">
+					<img th:src="@{/images/German.jpg}" style="width:100%;"/>
+					<div class="icon">
+						<h1><strong>德甲</strong></h1>
+					</div>
+				</a>
+			</div>
+			<div class="col-md-1"></div>
+		</div>
+	</div>  <!-- row -->
+</body>

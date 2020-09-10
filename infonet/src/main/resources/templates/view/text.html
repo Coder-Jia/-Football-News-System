@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>[[${news.newsTitle}]]</title>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/search.js}"></script>
+    <script type="text/javascript" th:src="@{/js/text.js}"></script>
+    <script type="text/javascript" th:src="@{/js/nav.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/General.css}"/>
+    <link rel="stylesheet" th:href="@{/plugins/css/editormd.preview.css}" />
+
+    <script>
+        $(function(){
+            //浏览量
+            $.post(
+                "/infonet/browse",
+                {"newsID":[[${news.newsId}]]+""},
+                function(){
+                    console.log("browse+1");
+                }
+            )
+
+            //登陆时显示是否点赞过该文章
+            console.log([[${liked}]] +":点赞：");
+            if([[${liked!=null}]]){
+                if([[${liked==true}]]){
+                    $(".like img").attr("src","/infonet/css/icon/liked.png");
+                }else{
+                    $(".like img").attr("src","/infonet/css/icon/like.png");
+                }
+            }else{
+                $(".like img").attr("src","/infonet/css/icon/like.png");
+            }
+
+            //文章点赞
+            $(".like").click(function(e){
+                e.preventDefault();
+                //如果未登录，则无法点赞
+                if([[${session.uId!=null && not #strings.isEmpty(session.uId)}]]){
+                    var times_like = Number($($(".like span")[1]).text());
+                    var src = "";
+                    var change = 1;//点赞数+1或是-1
+                    if($(".like img").attr("src") == "/infonet/css/icon/liked.png"){
+                        times_like = times_like - 1;
+                        src = "/infonet/css/icon/like.png";
+                        change = -change;
+                    }else if($(".like img").attr("src") == "/infonet/css/icon/like.png"){
+                        times_like = times_like + 1;
+                        src = "/infonet/css/icon/liked.png";
+                    }else return ;
+                    $(".like span").text(String(times_like));
+                    $(".like img").attr("src",src);
+                    //AJAX增加点赞数
+                    $.post(
+                        "/infonet/likeNews",
+                        {"userId":[[${session.uId}]]+"","newsID":[[${news.newsId}]]+"","Change":change}
+                    );
+                }else{
+                    alert("请登录之后再进行点赞噢！（点击确定 1秒后自动跳转）");
+                    window.setTimeout(function(){
+                        window.location.href = "/infonet/login";
+                    },1000);
+                }
+            })
+
+            //评论显示
+            var logined = 0;
+            if( [[${session.uId!=null}]] ){
+                logined = [[${session.uId}]]+"";
+            }
+            CommentList(parseInt([[${news.newsId}]]),2,logined);//默认显示五条评论
+        });
+    </script>
+</head>
+<body>
+<!--导航条 -->
+<div th:replace="~{view/Nav::nav}"></div>
+
+<div class="row col-md-8 col-md-offset-2" style="margin-top:60px;text-align:center;height:auto;">
+    <h1>[[${news.newsTitle}]]</h1>
+    <p style="padding-top:10px;"><time pubdate>发布时间 ：[[${news.newsDate}]]</time></p>
+    <div style="width:100%;">
+        <a class="browse" title="浏览量"><img th:src="@{/css/icon/browse.png}" class="ICON_Content"><span class="badge" style="margin-left:2px;">[[${news.newsBrowse}]]</span></a>
+        <a class="comment" title="评论数"><img th:src="@{/css/icon/comment.png}" class="ICON_Content" style="margin-left:40px;"><span class="badge" style="margin-left:2px;">[[${news.newsComment}]]</span></a>
+        <a class="like" title="点赞数" style="cursor:pointer;"><img style="width:22px;heigth:22px;margin-left:40px;"><span class="badge" style="margin-left:2px;">[[${news.newsLike}]]</span></a>
+    </div>
+    <p style="margin-top:20px;"><img alt="封面" th:src="@{${news.newsCover}}"/></p>
+
+    <div th:replace="~{view/html-preview-markdown-to-html::showcontent}"></div>
+
+    <div style="width:100%;margin-top:60px;text-align:right;">
+        <a href="#" class="like" title="点赞"><img style="width:22px;heigth:22px;margin-left:40px;"><span class="badge" style="margin-left:2px;">[[${news.newsLike}]]</span></a>
+    </div>
+</div>
+
+<h3 class="col-md-9 col-md-offset-1" style="border:0px;border-bottom:2px solid lightgray;margin-top:50px;">评论 <a th:if="${session.uId==null}" th:href="@{/login}" style="font-family: 楷体;font-size: medium;">登陆参与评论(点赞)吧！</a></h3><div class="col-md-9 col-md-offset-3"></div><!-- 评论分割线 -->
+
+<!-- 评论 -->
+<form th:action="@{/comments}" method="post" class="col-md-10 col-md-offset-2" th:if="${session.uId!=null}" id="Commentform">
+    <input type="hidden" th:value="${news.newsId }" name="newsId"/>
+    <input type="hidden" name="userId" th:value="${session.uId}"/>
+    <div class="media">
+        <div class="media-left  media-middle">
+            <img class="media-object img-rounded" th:src="@{/css/icon/com.png}" alt="你的头像" style="width:100px;height:80px;">
+        </div>
+        <div class="media-body">
+            <textarea rows="5" style="width:72%;height:80px;resize:none;margin-left:10px;display:inline;margin-top:13px;" placeholder="输入你的评论..50个字以内" class="form-control" name="CommentContent" id="Comment_content"></textarea>
+            <button type="button" class="btn btn-warning btn-sm" style="display:inline;margin-bottom:12px;" id="commentBtn">确认评论</button>
+        </div>
+    </div>
+</form>
+
+
+<div th:if="${yourcomment!=null}">
+<div class="col-md-9 col-md-offset-1" style="padding-left:60px;" >
+    <div class="media" style="margin-top:10px;">
+        <div class="media-left media-top">
+            <a><div class="media-object" style="width:100px;height:80px;">
+                <img  src="/infonet/css/icon/newest.png" alt="你的最新评论" style="width:60px;margin-left:10%;margin-top:13%;">
+            </div></a>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading"><b>靓评 Yours </b></h4>
+            <textarea rows="5" readonly="readonly" style="width:90%;height:80px;resize:none;border:none;cursor:default;outline: none;">[[${yourcomment.commentContent}]] &#10;[[${yourcomment.commentDate}]]
+            </textarea>
+        </div>
+    </div>
+</div>
+<h6 class="col-md-9 col-md-offset-1" style="border:0px;border-bottom:2px solid lightgray;margin-top:10px;">其他</h6><div class="col-md-9 col-md-offset-3"></div><!-- 分割线 -->
+</div>
+
+<!-- 评论列表和回复 -->
+<div class="col-md-9 col-md-offset-1" style="padding-left:60px;" id="CommentAndReply">
+    <!-- 这里显示评论与回复内容 -->
+</div>
+
+
+<div class="col-md-12" style="border-top:2px solid lightgray;margin-top:20px;"><!-- 五大联赛分栏 -->
+    <div th:replace="~{view/Nav_bottom::nav_bottom}"></div>
+</div>
+
+<!-- 评论操作提醒模态框 -->
+<div class="modal fade" tabindex="-1" role="dialog" id="mymodal" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- 头部 -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">提示：</h4>
+            </div>
+            <!-- 身体 -->
+            <div class="modal-body">
+                <p>[[${addCom_result}]]&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <!-- 底部 -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+<script>
+    $(function(){
+        if ([[${addCom_result!=null && not #strings.isEmpty(addCom_result)}]]) {
+            $("#mymodal").modal("show");
+            window.setTimeout(function(){
+                $("#mymodal").modal("hide");
+            },1200);
+        }
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+@charset "UTF-8";
+
+td{
+	text-align:center;
+	vertical-align: middle;
+}
+
+.td-insert{
+	margin-top:8px;
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>新增/修改 资讯页</title>
+    <link rel="stylesheet" th:href="@{/plugins/css/editormd.css}"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/General.css}">
+    <link rel="stylesheet" th:href="@{/css/file.css}">
+    <script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <style>
+        .affixed-element-top.affix{
+            top:100px;
+            left:30px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 接受操作结果 -->
+<!-- 模态框，用来提示注册结果 -->
+<div class="modal fade" tabindex="-1" role="dialog" id="mymodal" th:if="${not #strings.isEmpty(message)}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- 头部 -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">The result<br/></h4>
+            </div>
+            <!-- 身体 -->
+            <div class="modal-body">
+                <p><span >[[${message}]]</span>&hellip;</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+        $("#mymodal").modal("show");
+    })
+</script>
+
+<!--导航条 -->
+<div th:replace="~{mana/Nav_mana::nav}"></div>
+
+<form th:action="@{/news}" th:method="post" id="myForm" enctype="multipart/form-data" style="margin-top:70px;">
+    <div class="row container" style="margin-left: 10%;margin-top:7%;padding-bottom: 100px;">
+
+        <input type="hidden" name="newsId" th:value="${news.newsId}" th:if="${news!=null}"/>
+        <input type="hidden" name="_method" th:value="put" th:if="${news!=null}"/>
+
+        <!--标题-->
+        <div class="input-group input-group-lg" >
+            <span class="input-group-addon">title[[${message}]]</span>
+            <input name="newsTitle" type="text" class="form-control" placeholder="输入标题" aria-describedby="sizing-addon1"
+            th:value="${news!=null}?${news.newsTitle}"/>
+        </div>
+        <!--分类-->
+        <div style="margin-top:15px;">
+            <span class="input-group-addon input-lg" style="display: inline;width:9%;">资讯类别</span>
+            <select name="typeId" class="form-control input-lg" style="display: inline;width:90%;padding-top:3px;">
+                <option th:each="type:${allTypes}" th:value="${type.typeId}" th:selected="${news!=null}?${type.typeId==news.typeId}">
+                    [[${type.typeId}]] - [[${type.typeName}]]
+                </option>
+            </select>
+        </div>
+        <!--上传封面-->
+        <!--执行一段空白的javascript语句，返回空或者false值，防止链接跳转-->
+        <a href="javascript:;" class="file"><span class="glyphicon glyphicon-picture"></span> 上传封面
+            <input type="file" name="cover" id="news_Cover">
+        </a>
+        <!--简介-->
+        <textarea th:name="newsIntro" class="form-control" rows="3" style="margin-top: 12px;" th:value="${news!=null}?${news.newsIntro}" th:text="${news!=null}?${news.newsIntro}:'资讯简介'"></textarea>
+        <!--编辑区-->
+        <div style="margin-top:15px;">
+            <div id="test-editormd" style="z-index: 10000;">
+                <textarea th:name="newsContent" style="display:none;" name="content" th:value="${news!=null}?${news.newsContent}" th:text="${news!=null}?${news.newsContent}:'**此处输入正文内容**'"></textarea>
+            </div>
+        </div>
+        <!--提交-->
+        <button id="publish" type="button" class="btn btn-primary btn-lg" style="float:right;margin-right:45px;" th:if="${news==null}">发布</button>
+        <button id="updating" type="button" class="btn btn-primary btn-lg" style="float:right;margin-right:45px;" th:if="${news!=null}">修改</button>
+        <a id="quit" tabindex="0" class="btn btn-danger btn-lg" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover"
+           data-content="确定放弃编辑吗?" style="float:right;margin-right:10px;">退出</a>
+    </div>
+</form>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="confirm" style="z-index: 20000;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- 头部 -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><span >请确定？</span><br/></h4>
+            </div>
+            <!-- 身体 -->
+            <div class="modal-body">
+                <p><span id="confirmtext"></span>&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <a id="onDecide" type="button" class="btn btn-default">确定</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/plugins/editormd.min.js}"></script>
+<script type="text/javascript">
+    //初始化markdown
+    var testEditor;
+    $(function () {
+        testEditor = editormd("test-editormd", {
+            width: "90%",
+            height: 640,
+            syncScrolling: "single",
+            path: "plugins/lib/"
+        });
+    });
+</script>
+
+
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script>
+    //初始化
+    $(function(){
+        $(".js-affixed-element-top").affix({
+            offset:{
+                //不添加则执行默认值
+            }
+        });
+    });
+    $(function(){
+        $("#confirm").modal("hide");
+
+        //退出
+        $("#quit").click(function(){
+            $("#confirmtext").text("确认退出你编辑的内容将会丢失噢！Sure?");
+            $("#onDecide").unbind("click");
+            $("#onDecide").attr("href","news");
+            $("#confirm").modal("show");
+        });
+        //发布
+        $("#publish").click(function(){
+            var file_cover = $("#news_Cover").get(0).files[0];
+            if(file_cover==null){
+                alert("你还没上传资讯封面文件");
+            }else{
+                var split = $("#news_Cover").val().split(".");
+                var ext = split[split.length-1].toLowerCase();
+                if (!(ext=="jpeg") && !(ext=="png") && !(ext=="jpg") && !(ext=="gif")){
+                    alert("图片只支持[jpeg、png、jpg、gif]");
+                }else{
+                    $("#onDecide").removeAttr("href")
+                    $("#onDecide").click(function(){
+                        $("#myForm").submit();
+                    });
+                    $("#confirmtext").text("确认无误再发布哈！");
+                    $("#confirm").modal("show");
+                }
+            }
+        });
+        $("#updating").click(function(){
+            $("#onDecide").removeAttr("href")
+            $("#onDecide").click(function(){
+                $("#myForm").submit();
+            });
+            $("#confirmtext").text("确认无误再确定哈！");
+            $("#confirm").modal("show");
+        });
+    })
+</script>
+</body>
+</html>

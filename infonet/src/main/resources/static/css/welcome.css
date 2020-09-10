@@ -1,0 +1,37 @@
+@charset "UTF-8";
+
+h1,h3,p,a,button{
+	font-family:monospace;
+	font-weight: bold;
+}
+
+#welcome-bg{
+	background-image: url("../images/Messy.jpg");
+	width:100%;
+	height:100%;
+	position:absolute;
+	background-position:center center;
+	background-size:cover;
+}
+
+.login_register{
+	margin-top:10px;
+}
+
+.headh1content{
+	margin-top:90px;
+	line-height:75px; /* 行间距 */
+}
+
+.title-text{
+	marign-left:40px;
+}
+
+.headfont h1{
+	font-size:50px;
+	color:gray;
+}
+
+.headfont p{
+	color:gray;
+}

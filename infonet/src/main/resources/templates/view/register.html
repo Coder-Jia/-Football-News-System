@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/General.css}"/>
+    <script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/nav.js}"></script>
+    <script type="text/javascript" th:src="@{/js/search.js}"></script>
+    <style>
+        strong {
+            font-weight: 900;
+            color: white;
+        }
+
+        .alert-info {
+            background-color: black;
+            border: 0;
+        }
+    </style>
+    <script>
+        $(function(){
+            $("#referer").val(window.document.referrer);
+        });
+    </script>
+</head>
+<body>
+
+
+<!-- 接受操作结果 -->
+<!-- 模态框，用来提示注册结果 -->
+<div class="modal fade" tabindex="-1" role="dialog" id="mymodal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- 头部 -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">The result<br/></h4>
+            </div>
+            <!-- 身体 -->
+            <div class="modal-body">
+                <p><span id="regiter_result"></span></span>&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">登录</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="Page-bg">
+    <!--导航条 -->
+    <div th:replace="~{view/Nav::nav}"></div>
+
+
+    <!-- 注册信息 -->
+    <fieldset>
+        <div class="row" style="margin-top:10px;height:500px;margin-top:30px;">
+            <div class="container" style="background-color:#242424;margin-top:50px;height:380px;border:1px solid red;">
+                <form role="form" class="form-horizontal" th:action="@{/registerUserServlet}" method="post" id="form">
+
+                    <input th:type="hidden" id="referer" th:name="referer"/>
+
+                    <div class="form-group">
+                        <h1 class="col-md-2 col-md-offset-5"><strong>注册</strong></h1>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-1 col-md-offset-3 control-label"><strong>手机号 </strong> </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="phone" name="userPhone" id="phone"/>
+                        </div>
+                        <!-- 手机号格式错误 -->
+                        <span style="color:red;margin-top:5px;" class="col-md-4" id="ph_span">*</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 col-md-offset-3 control-label"><strong>用户名 </strong> </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="username" name="userName" id="name"/>
+                        </div>
+                        <!-- 用户名格式错误 -->
+                        <span style="color:red;margin-top:5px;" class="col-md-4" id="nm_span">*</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 col-md-offset-2 control-label"><strong>密码</strong> </label>
+                        <div class="col-md-4">
+                            <input type="password" class="form-control" placeholder="password" name="userPwd" id="pwd"/>
+                        </div>
+                        <!-- 密码格式错误 -->
+                        <span style="color:red;margin-top:5px;" class="col-md-4" id="pwd_span">*</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 col-md-offset-2 control-label"><strong>真实姓名</strong> </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="realname" name="userRealname"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 col-md-offset-2 control-label"><strong>性别</strong> </label>
+                        <div class="col-md-1 col-md-offset-1">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" value="b" name="userSex"/><strong>男</strong>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" value="g" name="userSex"/><strong>女</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4" style="margin-left:45%;">
+                            <button class="btn btn-success" id="btn-register">注册</button>
+                            <span style="color:red;margin-top:5px;margin-left:100px;" id="btn_span"> * 为必填</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div> <!-- row -->
+    </fieldset>
+
+    <script>
+        function login() {
+            $.ajax({
+                type: "POST",
+                dataType: "json",//预期服务器返回的数据类型
+                url: "/infonet/registerUserServlet",//url
+                data: $('#form').serialize(),
+                success: function (result) {
+                    $("#mymodal").modal("show");
+                    $("#regiter_result").text(result.status);
+                    $('#mymodal').on('hide.bs.modal', function () {
+                        if (result.status === "注册成功") {
+                            window.location.href = "/infonet/login";
+                        }
+                    });
+                },
+                error: function () {
+                    alert("异常！");
+                }
+            });
+        }
+
+
+        var canSubmit_phone = false;
+        var canSubmit_name = false;
+        var canSubmitpwd = false;
+        $("#phone").blur(function () {
+            var ph = $("#phone").val();
+            var reg = /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/;
+            if (ph == "") {
+                $("#ph_span").text("手机号不能为空");
+            } else if (!reg.test(ph)) {
+                $("#ph_span").text("不是正确的手机号");
+            } else {
+                $("#ph_span").text("√");
+                canSubmit_phone = true;
+            }
+        })
+        $("#name").blur(function () {
+            var nm = $("#name").val();
+            if (nm == "") {
+                $("#nm_span").text("用户名不能为空");
+            } else if (nm.length > 6) {
+                $("#nm_span").text("用户名不能长于6个字符");
+            } else {
+                $("#nm_span").text("√");
+                canSubmit_name = true;
+            }
+        })
+        $("#pwd").blur(function () {
+            var pwd = $("#pwd").val();
+            if (pwd == "") {
+                $("#pwd_span").text("密码不能为空");
+            } else if (pwd.length > 10) {
+                $("#pwd_span").text("密码不能长于10个字符");
+            } else if (pwd.length < 6) {
+                $("#pwd_span").text("密码不能短于6个字符");
+            } else {
+                $("#pwd_span").text("√");
+                canSubmit_pwd = true;
+            }
+        })
+        $("#btn-register").click(function (e) {
+            e.preventDefault();
+            if (canSubmit_phone == true && canSubmit_name == true && canSubmit_pwd == true) {
+                login();//登陆
+            } else {
+                $("#btn_span").text("格式有误");
+            }
+        })
+    </script>
+
+    <!-- 五大联赛分栏 -->
+    <div th:replace="~{view/Nav_bottom::nav_bottom}"></div>
+</body>
+</html>

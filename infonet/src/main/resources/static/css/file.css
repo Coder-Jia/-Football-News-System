@@ -1,0 +1,30 @@
+.file {
+    width:99%;
+    text-align:center;
+    margin-top:12px;
+    position: relative;
+    display: inline-block;
+    background: #AADFFD;
+    border: 1px solid #78C3F3;
+    border-radius: 10em;
+    padding: 5px 12px;
+    overflow: hidden;
+    color: rgba(0, 0, 0, 1);
+    font-weight: bolder;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #5859ff;
+    border-color: #5859ff;
+    color: #004974;
+    text-decoration: none;
+}

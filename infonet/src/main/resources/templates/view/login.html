@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.4/css/bootstrap.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/homePage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/General.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/nav.js}"></script>
+    <style>
+        strong {
+            font-weight: 900;
+            color: white;
+        }
+         .navbar {
+             box-shadow: 10px 10px 20px 10px gray;
+             border: 0px;
+         }
+    </style>
+    <script>
+        $(function(){
+            $("#referer").val(window.document.referrer);
+        });
+    </script>
+</head>
+<body>
+<!--当前页面只有未登陆状态才可以访问-->
+
+<div class="Page-bg">
+    <!--导航条 -->
+    <div th:replace="~{view/Nav::nav}"></div>
+
+    <!-- 登陆 -->
+
+    <div class="row" style="margin-top:50px;height:470px;">
+        <fieldset class="container" style="background-color:#242424;margin-top:68px;">
+            <form role="form" class="form-horizontal" th:action="@{/loginUserServlet}" method="post"
+                  style="margin-top:20px;margin-bottom:50px;">
+                <input th:type="hidden" id="referer" th:name="referer" th:if="${referer==null}"/>
+                <input th:type="hidden" th:name="referer" th:value="${referer}" th:unless="${referer==null}"/>
+                <div class="form-group  col-md-12">
+                    <h1 class="col-md-2 col-md-offset-5"><strong>登陆</strong></h1>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-1 col-md-offset-3 control-label"><strong>手机号 </strong> </label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control " placeholder="phone" name="uphone"/>
+                    </div>
+
+                    <span style="color:red;margin-top:5px;" class="col-md-4"
+                          th:text="${error_phone!=null}?${error_phone}"></span>
+
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 col-md-offset-2 control-label"><strong>密码</strong> </label>
+                    <div class="col-md-4">
+                        <input type="password" class="form-control" placeholder="password" name="pwd"/>
+                    </div>
+
+                    <span style="color:red;margin-top:5px;" class="col-md-4" th:text="${error_pwd!=null}?${error_pwd}">${requestScope.error_pwd }</span>
+
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-4 col-md-4">
+                        <button type="submit" class="btn btn-success">登陆</button>
+                    </div>
+                </div>
+            </form>
+        </fieldset>
+    </div>
+
+    <!-- 五大联赛分栏 -->
+    <div th:replace="~{view/Nav_bottom::nav_bottom}"></div>
+</div>
+
+</body>
+</html>

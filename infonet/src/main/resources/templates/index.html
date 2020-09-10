@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>欢迎您，亲爱的足球迷</title>
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.4/css/bootstrap.css}"/>
+	<link rel="stylesheet" th:href="@{/css/welcome.css}"/>
+	<style>
+		html,body{
+			padding: 0;
+			margin: 0;
+			height: 100%;
+			width:100%;
+		}
+	</style>
+</head>
+<body>
+	<div id="welcome-bg">
+		<div class="container" >
+			<div class="row">
+				<div class="login_register">
+					<div class="col-md-2  col-md-offset-10">
+						<a th:href="@{/login}" style="color:white;opacity:0.5;">登陆</a>
+						<a th:href="@{/register}" style="color:white;opacity:0.5;margin-left:10px;">注册</a>
+					</div>
+				</div>
+			</div>
+		
+			<div class="row">
+				<div class="title-text">
+					<div class="col-md-12 headfont" >
+						<h1 class="headh1content">
+							在这里你将懂得为何
+							<br/><strong>足球是圆的!</strong>
+						</h1>
+						<p style="margin-top:20px;">亲爱的足球迷</p>
+						<p>让我们一起来领略足球的魅力吧！</p>
+						<p>
+							<a class="btn btn-success btn-lg" th:href="@{/homePage}">立即进入！</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

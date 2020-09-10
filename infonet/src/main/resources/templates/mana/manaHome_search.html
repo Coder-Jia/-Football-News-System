@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>资讯管理</title>
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/css/tables.css}"/>
+	<script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+	<link th:href="@{/css/suspension.css}" rel="stylesheet"/>
+	<style>
+		td,th{
+			text-align:center;
+			vertical-align: center;
+		}
+	</style>
+</head>
+<body>
+
+<!-- 接受操作结果 -->
+<div class="modal fade" tabindex="-1" role="dialog" id="mymodal" th:if="${result_Operate_add==null}">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<!-- 头部 -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">看看这里！<span class="result_span"></span><br/></h4>
+			</div>
+			<!-- 身体 -->
+			<div class="modal-body">
+				<p><span class="result_span"></span>&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 接受操作--增加结果 -->
+<div class="modal fade" tabindex="-1" role="dialog" th:if="${result_Operate_add!=null}">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<!-- 头部 -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">看看这里！<span class="result_span">[[${result_Operate_add}]]</span><br/></h4>
+			</div>
+			<!-- 身体 -->
+			<div class="modal-body">
+				<p><span class="result_span">[[${result_Operate_add}]]</span>&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--导航栏-->
+<div th:replace="~{mana/Nav_mana2::nav_mana}"></div>
+
+<div class="row" style="margin-left:1%;position:absolute;top:50px;">
+	<table id="hor-minimalist-a" summary="Employee Pay Sheet" style="table-layout: fixed;">
+		<thead>
+		<tr>
+			<th scope="col" style="width:200px;border:1px solid gray;">资讯标题</th>
+			<th scope="col" style="width:50px;border:1px solid gray;">类编</th>
+			<th scope="col" style="width:450px;border:1px solid gray;">资讯简介</th>
+			<th scope="col" style="width:300px;border:1px solid gray;">时间</th>
+			<th scope="col" style="width:280px;border:1px solid gray;">管理[option]</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="news:${page}">
+			<td>[[${news.newsTitle}]]</td>
+			<td>[[${news.typeId}]]</td>
+			<td style="width:400px;text-align:left;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">[[${news.newsIntro}]]</td>
+			<td>[[${news.newsDate}]]</td>
+			<td>
+				<button class="btn btn-danger deleteBtn" th:attr="deluri=@{/news}+'?newsID='+${news.newsId}">删除</button>
+				<a class="btn btn-danger" th:href="@{/newsById}+'?newsID='+${news.newsId}">修改</a>
+				<a class="btn btn-success" th:href="@{/toContent/}+${news.newsId}">跳转用户界面</a>
+			</td>
+		</tr>
+		<tr ><td colspan="5">
+			<nav aria-label="Page navigation">
+				<ul class="pagination">
+					<!--只有一页-->
+					<li th:if="${totalPage<=1}"><label class="label label-info">*</label></li>
+					<!--第一页-->
+					<li th:if="${totalPage>1 && currentPage==1}"><a
+							th:href="@{/search}+'?currentPage='+${currentPage+1}+'&queryString='+${queryString}+'&isMana=true'">下一页</a>
+					</li>
+					<li th:if="${totalPage>1 && currentPage==1}"><a
+							th:href="@{/search}+'?currentPage='+${totalPage}+'&queryString='+${queryString}+'&isMana=true'">尾页</a>
+					</li>
+					<!--最后一页-->
+					<li th:if="${totalPage>1 && currentPage==totalPage}"><a
+							th:href="@{/search}+'?currentPage=1&queryString='+${queryString}+'&isMana=true'">首页</a>
+					</li>
+					<li th:if="${totalPage>1 && currentPage==totalPage}"><a
+							th:href="@{/search}+'?currentPage='+${currentPage-1 }+'&queryString='+${queryString}+'&isMana=true'">上一页</a>
+					</li>
+					<!--中间-->
+					<li th:if="${totalPage>1 && currentPage!=totalPage && currentPage!=1}"><a
+							th:href="@{/search}+'?currentPage=1&queryString='+${queryString}+'&isMana=true'">首页</a>
+					</li>
+					<li th:if="${totalPage>1 && currentPage!=totalPage && currentPage!=1}"><a
+							th:href="@{/search}+'?currentPage='+${currentPage-1 }+'&queryString='+${queryString}+'&isMana=true'">上一页</a>
+					</li>
+					<li th:if="${totalPage>1 && currentPage!=totalPage && currentPage!=1}"><a
+							th:href="@{/search}+'?currentPage='+${currentPage+1}+'&queryString='+${queryString}+'&isMana=true'">下一页</a>
+					</li>
+					<li th:if="${totalPage>1 && currentPage!=totalPage && currentPage!=1}"><a
+							th:href="@{/search}+'?currentPage='+${totalPage }+'&queryString='+${queryString}+'&isMana=true'">尾页</a>
+					</li>
+				</ul>
+			</nav>
+		</td></tr>
+		</tbody>
+	</table>
+</div>
+
+<script>
+    $(function(){
+        $(".deleteBtn").click(function(){
+            $.ajax({
+                url: $(this).attr("deluri"),
+                type: "delete",
+                contentType: "application/json",//设置请求参数类型为json字符串,
+                success: function (result) {
+                    console.log(result);
+                    $(".result_span").text(result);
+                    $("#mymodal").modal("show");
+                    window.setTimeout(function(){
+                        window.location.href = "/infonet/search?isMana=true&currentPage=[[${currentPage}]]&queryString=[[${queryString}]]"
+                    },700);
+                }
+            });
+        });
+    });
+</script>
+
+<!--悬浮窗-->
+<div th:replace="~{mana/suspension::suspension}"></div>
+<script>
+    var menubox = document.getElementById("area"); //area为菜单栏的id
+    var cli_on = document.getElementById("on"); //on为按钮
+    var flag = false, timer = null, initime = null, r_len = 0;
+
+    if(menubox.style.right=== 0){
+        flag = true;
+    }
+    else{
+        flag = false;
+    }
+    cli_on.onclick = function () {
+        //为on按钮绑定click事件
+        clearTimeout(initime);
+        //根据状态flag执开展开收缩
+        if (flag) {
+            r_len = 0;
+            timer = setInterval(slideright, 10);
+        } else {
+            r_len = -125;
+            timer = setInterval(slideleft, 10);
+        }
+    }
+    //展开
+    function slideright() {
+        if (r_len <= -125) {
+            clearInterval(timer);
+            flag = !flag;
+            return false;
+        }else{
+            r_len -= 5;
+            menubox.style.right = r_len + 'px';
+        }
+    }
+    //收缩
+    function slideleft() {
+        if (r_len >= 0) {
+            clearInterval(timer);
+            flag = !flag;
+            return false;
+        } else {
+            r_len += 5;
+            menubox.style.right = r_len + 'px';
+        }
+    }
+
+    //回车搜索
+    function searchfor(element){
+        var event = window.event;
+        if(event.keyCode ==13){
+            var keyword = $(element).val();
+            window.location.href = "/infonet/search?isMana=true&queryString="+keyword;
+        }
+    }
+
+    $(function(){
+        $.getJSON(
+            "/infonet/TypesForNav",
+            function (result) {
+                var count = parseInt(result.length);//得到类别总数
+                var html = "<option>分类查询</option>";
+                $.each(result, function () {
+                    html = html + "<option value='" + this.typeId + "'>" + this.typeName + "</a></option>";
+                });
+                $(".myoption").html(html);
+            }
+        )
+    })
+
+    function changeoption(element){
+        var option = $(element).val();
+        window.location.href = "/infonet/news?option=-"+option;
+    }
+</script>
+
+
+
+
+</body>
+</html>

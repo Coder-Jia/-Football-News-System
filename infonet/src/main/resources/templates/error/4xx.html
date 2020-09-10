@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>客户端异常[[${status}]]</title>
+</head>
+<body>
+    <h1>[[${status}]]</h1>
+    <h3>[[${error}]]</h3>
+    <div>
+        时间：[[${timestamp}]]<br/>
+        异常信息：[[${message}]]<br/>
+        异常对象：[[${exception}]]<br/>
+    </div>
+</body>
+</html>

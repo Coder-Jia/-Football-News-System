@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>悬浮窗</title>
+</head>
+<body>
+<div id="area" th:fragment="suspension">
+    <div id="small_menu">
+        <ul>
+            <li><a th:href="@{/news}+'?option=3'">最新</a></li>
+            <li><a th:href="@{/news}+'?option=4'">最久</a></li>
+            <li><a th:href="@{/news}+'?option=1'">最热</a></li>
+            <li><a th:href="@{/news}+'?option=2'">最冷</a></li>
+            <li><select style="width:100%;height:100%;border: #00d95a" class="myoption" onchange="changeoption(this)"></select></li>
+            <li><input type="text" placeholder="关键字查询" id="search" onkeyup="searchfor(this);"/></li>
+        </ul>
+    </div>
+    <div id="on" onclick="xuanfu();"><p>+</p></div>
+</div>
+</body>
+</html>

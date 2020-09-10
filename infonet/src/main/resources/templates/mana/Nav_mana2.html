@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<!--头 -->
+<div class="row" th:fragment="nav_mana" style="width:100%;">
+    <nav class="navbar navbar-default navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <!-- 折叠 -->
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand" href="#" style="margin-left:5px;"> Manager</span>
+            </div>
+
+
+            <ul class="nav navbar-nav" id="mytypelist">
+                <li><a th:href="@{/types}">增加资讯</a></li>
+                <li><a th:href="@{/types}+'?totype=true'">类别操作</a></li>
+            </ul>
+
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right" th:if="${session.mname!=null}">
+                    <li><a th:href="@{/mana}"
+                           style="font-size:15px;color:gray;margin-top:0px;margin-left:15px;margin-right:20px;">注销</a>
+                    </li>
+                    <li><h4 style="color:white;margin-top:15px;">资讯管理员：</h4></li>
+                    <li><h4 style="color:white;margin-top:15px;margin-left:10px;margin-right:30px;">
+                        [[${session.mname}]]</h4></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
